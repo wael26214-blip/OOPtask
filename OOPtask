@@ -186,7 +186,7 @@ def supportSet(IDs) :
     return age, speed, capacity, id, name, team, crew, reliability
 def crewSet() :
     crew = int(input('Enter number of the crew of the car: '))
-    if crew >= 0 :
+    if crew >= 1 :
        return crew
     else :
        print ('invalid number of members')
@@ -231,8 +231,8 @@ def retire(racer, support, IDs):
             racer.remove(car)
             IDs.remove(car_id)
             print("Car retired successfully!")
-            program_base(racer, support, IDs)
-            return
+            return program_base(racer, support, IDs)
+            
 
     
     for car in support:
@@ -240,8 +240,8 @@ def retire(racer, support, IDs):
             support.remove(car)
             IDs.remove(car_id)
             print("Car retired successfully!")
-            program_base(racer, support, IDs)
-            return
+            return program_base(racer, support, IDs)
+            
 def checkerOfExict(IDs) :
     while True:
             car_id = input()
@@ -345,7 +345,6 @@ def garage_report(racer, support, IDs):
     
     if total_cars == 0:
         print("There are no cars in the garage to generate a report.")
-        program_base(racer, support, IDs)
         return program_base(racer, support , IDs)
 
     total_performance = 0
