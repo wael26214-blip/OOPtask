@@ -1,0 +1,450 @@
+import json
+import os
+
+racer = []
+support = []
+IDs = []
+
+# File Handling Functions (JSON)
+FILENAME = "garage_data.json"
+
+def save_data(racer_list, support_list):
+    data = []
+    for car in racer_list:
+        data.append(car.to_dict())
+    for car in support_list:
+        data.append(car.to_dict())
+    
+    with open(FILENAME, "w") as f:
+        json.dump(data, f, indent=4)
+
+def load_data():
+    racer_list = []
+    support_list = []
+    ids_list = []
+    
+    if os.path.exists(FILENAME):
+        try:
+            with open(FILENAME, "r") as f:
+                data = json.load(f)
+                for item in data:
+                    ids_list.append(item["id"])
+                    if item["type"] == "Racer":
+                        car = Racer(
+                            item["age"], item["speed"], item["capacity"],
+                            item["id"], item["name"], item["type"], item["team"],
+                            item["races"], item["laps"]
+                        )
+                        racer_list.append(car)
+                    elif item["type"] == "Support":
+                        car = SupportVehicle(
+                            item["age"], item["speed"], item["capacity"],
+                            item["id"], item["name"], item["type"], item["team"],
+                            item["crew"], item["reliability"]
+                        )
+                        support_list.append(car)
+        except Exception:
+            pass
+            
+    return racer_list, support_list, ids_list
+
+class Car:
+    def __init__(self, age, speed, capacity, id, name, type, team):
+        self.age = age
+        self.speed = speed
+        self.capacity = capacity
+        self.id = id
+        self.name = name
+        self.type = type
+        self.team = team
+    def performance (self):
+        Performance = self.speed + self.capacity
+        return Performance
+
+    def display_info(self):
+        print("ID:", self.id)
+        print("Name:", self.name)
+        print("Type:", self.type)
+        print("Team:", self.team)
+        print("Age:", self.age)
+        print("Speed:", self.speed)
+        print("Capacity:", self.capacity)
+        print("Performance:", self.performance())
+    
+    def to_dict(self):
+        return {
+            "type": self.type,
+            "age": self.age,
+            "speed": self.speed,
+            "capacity": self.capacity,
+            "id": self.id,
+            "name": self.name,
+            "team": self.team
+        }
+
+
+class Racer(Car):
+    def __init__(self, age, speed, capacity, id, name, type, team, races, laps):
+        super().__init__(age, speed, capacity, id, name, type, team)
+        self.races = races
+        self.laps = laps
+    def performance (self):
+            Performance = self.speed * 10 + self.capacity
+            return Performance    
+    def display_info(self):
+         print("ID:", self.id)
+         print("Name:", self.name)
+         print("Type:", self.type)
+         print("Team:", self.team)
+         print("Age:", self.age)
+         print("Speed:", self.speed)
+         print("Capacity:", self.capacity)
+         print("Performance:", self.performance())
+         print( "Races:",self.races)
+         print("Laps:",self.laps)
+
+    def to_dict(self):
+        data = super().to_dict()
+        data["races"] = self.races
+        data["laps"] = self.laps
+        return data
+
+class SupportVehicle(Car):
+    def __init__(self, age, speed, capacity, id, name, type, team, crew, reliability):
+        super().__init__(age, speed, capacity, id, name, type, team)
+        self.crew = crew
+        self.reliability = reliability
+    def performance (self):
+            Performance = self.speed * 5 + self.capacity * 5
+            return Performance    
+    def display_info(self):
+        print("ID:", self.id)
+        print("Name:", self.name)
+        print("Type:", self.type)
+        print("Team:", self.team)
+        print("Age:", self.age)
+        print("Speed:", self.speed)
+        print("Capacity:", self.capacity)
+        print("Performance:", self.performance())
+        print( "Crew:",self.crew)
+        print("Reliability:",self.reliability)
+
+    def to_dict(self):
+        data = super().to_dict()
+        data["crew"] = self.crew
+        data["reliability"] = self.reliability
+        return data
+
+def program_base( racer , support ,IDs):  
+    
+        print("=========================================")
+        print("            GARAGE MANAGEMENT            ")
+        print("=========================================")
+        print("1. Check In a Car")
+        print("2. View the Garage")
+        print("3. Tune-Up")
+        print("4. Retire")
+        print("5. Find a Car")
+        print("6. Garage Report")
+        print("7. Exit")
+        
+        choice = int(input("Enter your choice (1-7): "))
+       
+
+        match choice:
+            case 1:
+                build(racer , support ,IDs)
+            case 2:
+                view(racer , support , IDs)
+            case 3:
+                tune_up(racer, support, IDs)
+            case 4:
+                retire(racer, support, IDs)
+            case 5:
+                find_car(racer, support, IDs)
+            case 6:
+                garage_report(racer, support, IDs)
+            case 7:
+                print("Exiting program. Goodbye!")
+                save_data(racer, support)
+            case _:
+                print("Invalid choice! Please choose a number between 1 and 7.")
+                program_base(racer, support, IDs)
+
+def build(racer , support ,IDs) :
+    Tybe = int(input('Enter car type 1. Race , 2. support: '))
+    match Tybe :
+        case 1 :
+         age, speed, capacity, id, name, team, races, laps = racerSet(IDs)
+         new_racer = Racer(age, speed, capacity, id, name, "Racer", team, races, laps)
+         racer.append(new_racer)
+         print("Racer added successfully!")
+         save_data(racer, support)
+         program_base(racer, support, IDs)
+             
+        case 2 :
+         age, speed, capacity, id, name, team, crew, reliability = supportSet(IDs)
+         new_support = SupportVehicle(age, speed, capacity, id, name, "Support", team, crew, reliability)
+         support.append(new_support)
+         print("Support vehicle added successfully!")
+         save_data(racer, support)
+         program_base(racer, support, IDs)
+        case _ :
+            build(racer , support ,IDs)
+    
+def basicSet(IDs) :
+ age = ageSet()
+ speed = speedSet()
+ capacity = capacitySet()
+ id = idSet(IDs)
+ name = nameSet()
+ team = teamSet()
+ return age, speed, capacity, id, name, team
+def ageSet() :
+   age = int(input('Enter the age of the car: '))
+   if age >= 0 :
+        return age
+   else :
+        print ('invalid age')
+        return ageSet()
+def speedSet() :
+    speed = int(input('Enter the max speed of the car: '))
+    if speed > 0 :
+        return speed
+    else :
+        print ('invalid speed')
+        return speedSet()
+def capacitySet() :
+    capacity = int(input('Enter the capacity of the car: '))
+    if capacity > 1 :
+        return capacity
+    else :
+        print ('invalid speed')
+        return capacitySet() 
+def idSet(IDs) :
+    print('Enter the ID of the car: ')  
+    checker(IDs)
+def checker(IDs):
+    while True:
+        car_id = input()
+        if car_id in IDs:
+            print("Error: This ID already exists! Enter a new ID: ")
+        else:
+            IDs.append(car_id)
+            return car_id 
+def nameSet():
+    name = input ('Enter car name: ')
+    return name
+def teamSet():
+    team = input ('Enter team name: ') 
+    return team  
+
+     
+def racerSet(IDs):
+    age, speed, capacity, id, name, team = basicSet(IDs) 
+    races = racesSet()
+    laps = 4 * races
+    return age, speed, capacity, id, name, team, races, laps
+def racesSet() :
+     races = int(input ('Enter number of races: '))  
+     return races
+
+     
+def supportSet(IDs) :
+    age, speed, capacity, id, name, team = basicSet(IDs)   
+    crew = crewSet()
+    reliability = reliabilitySet() 
+    return age, speed, capacity, id, name, team, crew, reliability
+def crewSet() :
+    crew = int(input('Enter number of the crew of the car: '))
+    if crew >= 0 :
+       return crew
+    else :
+       print ('invalid number of members')
+       return crewSet() 
+def reliabilitySet() :
+   reliability = int(input('Enter the reliability rate of the car(0 : 10): '))
+   if reliability >= 0 and reliability <= 10 :
+       return reliability
+   else :
+       print ('invalid rating')
+       return reliabilitySet() 
+
+
+def view(racer , support , IDs) :
+    if not racer and not support:
+        print("There are no cars in the garage at all.")
+    
+    if racer:
+        print("--- Racing Cars ---")
+        for RACER in racer:
+            RACER.display_info()
+            
+    if support:
+        print("--- Support Vehicles ---")
+        for SUP in support:
+            SUP.display_info()      
+    program_base(racer, support, IDs) 
+
+
+def retire(racer, support, IDs):
+    if not racer and not support:
+        print("There are no cars in the garage to retire.")
+        program_base(racer, support, IDs)
+        return
+
+    print("Enter the ID of the car you want to retire: ")
+    car_id = checkerOfExict(IDs)
+    
+    
+    for car in racer:
+        if car.id == car_id:
+            racer.remove(car)
+            IDs.remove(car_id)
+            save_data(racer, support)
+            print("Car retired successfully!")
+            program_base(racer, support, IDs)
+            return
+
+    
+    for car in support:
+        if car.id == car_id:
+            support.remove(car)
+            IDs.remove(car_id)
+            save_data(racer, support)
+            print("Car retired successfully!")
+            program_base(racer, support, IDs)
+            return
+def checkerOfExict(IDs) :
+    while True:
+            car_id = input()
+            if car_id not in IDs:
+                print("Error: This ID doesn't exist! Enter a new ID: ")
+            else:
+                return car_id 
+
+
+
+def tune_up(racer, support, IDs):
+    if not racer and not support:
+        print("There are no cars in the garage to tune-up.")
+        return program_base(racer, support, IDs)
+        
+
+    print("Enter the ID of the car you want to tune-up:")
+    car_id = checkerOfExict(IDs)
+
+    target_car = None
+    is_racer = True
+    
+    for car in racer:
+        if car.id == car_id:
+            target_car = car
+            break
+            
+    if not target_car:
+        for car in support:
+            if car.id == car_id:
+                target_car = car
+                is_racer = False
+                break
+
+    print(f"Current details for car {car_id}:")
+    target_car.display_info()
+    
+    print("Enter new details:")
+    age, speed, capacity, name, team = basicReset()
+
+    target_car.age = age
+    target_car.speed = speed
+    target_car.capacity = capacity
+    target_car.name = name
+    target_car.team = team
+
+    if is_racer:
+        races = racesSet()
+        target_car.races = races
+        target_car.laps = 4 * races
+    else:
+        crew = crewSet()
+        reliability = reliabilitySet()
+        target_car.crew = crew
+        target_car.reliability = reliability
+
+    save_data(racer, support)
+    print("Car tuned-up successfully!")
+    program_base(racer, support, IDs)   
+def basicReset() :
+ age = ageSet()
+ speed = speedSet()
+ capacity = capacitySet()
+ name = nameSet()
+ team = teamSet()
+ return age, speed, capacity, name, team
+
+
+
+def find_car(racer, support, IDs):
+    if not racer and not support:
+        print("There are no cars in the garage to search.")
+        return program_base(racer, support, IDs)
+        
+
+    print("Enter the ID of the car you want to find:")
+    car_id = checkerOfExict(IDs)
+
+    target_car = None
+    
+    for car in racer:
+        if car.id == car_id:
+            target_car = car
+            break
+            
+    if not target_car:
+        for car in support:
+            if car.id == car_id:
+                target_car = car
+                break
+
+    print(f"Car found! Here are the details for ID {car_id}:")
+    target_car.display_info()
+    
+    program_base(racer, support, IDs)
+
+
+
+def garage_report(racer, support, IDs):
+    all_cars = racer + support
+    total_cars = len(all_cars)
+    
+    if total_cars == 0:
+        print("There are no cars in the garage to generate a report.")
+        program_base(racer, support, IDs)
+        return program_base(racer, support , IDs)
+
+    total_performance = 0
+    for car in all_cars:
+        total_performance += car.performance()
+    
+    avg_performance = total_performance / total_cars
+
+    teams_count = {}
+    for car in all_cars:
+        if car.team in teams_count:
+            teams_count[car.team] += 1
+        else:
+            teams_count[car.team] = 1
+
+    print("GARAGE REPORT")
+    print(f"Total Cars Checked In: {total_cars}")
+    print(f"Average Performance Score: {avg_performance:.2f}")
+    print("Breakdown of Cars Per Team:")
+    for team, count in teams_count.items():
+        print(f"Team {team}: {count} car(s)")
+    print("\n")
+
+    program_base(racer, support, IDs)
+
+if __name__ == "__main__":
+    racer, support, IDs = load_data()
+    program_base(racer, support, IDs)
