@@ -144,10 +144,10 @@ def speedSet() :
         return speedSet()
 def capacitySet() :
     capacity = int(input('Enter the capacity of the car: '))
-    if capacity > 1 :
+    if capacity >= 1 :
         return capacity
     else :
-        print ('invalid speed')
+        print ('invalid capacity')
         return capacitySet() 
 def idSet(IDs) :
     print('Enter the ID of the car: ')  
