@@ -151,7 +151,7 @@ def capacitySet() :
         return capacitySet() 
 def idSet(IDs) :
     print('Enter the ID of the car: ')  
-    checker(IDs)
+    return checker(IDs)
 def checker(IDs):
     while True:
         car_id = input()
