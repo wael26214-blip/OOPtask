@@ -99,7 +99,7 @@ def program_base( racer , support ,IDs):
                 print("Exiting program. Goodbye!")
             case _:
                 print("Invalid choice! Please choose a number between 1 and 7.")
-                program_base()
+                program_base(racer , support , IDs)
 
 def build(racer , support ,IDs) :
     Tybe = int(input('Enter car type 1. Race , 2. support: '))
